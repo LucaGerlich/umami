@@ -37,11 +37,13 @@
   const domain = config('domains') || '';
   const credentials = config('fetch-credentials') || 'omit';
   const perf = config('performance') === _true;
+  const heatmapEnabled = config('heatmap') === _true;
 
   const domains = domain.split(',').map(n => n.trim());
   const host =
     hostUrl || '__COLLECT_API_HOST__' || currentScript.src.split('/').slice(0, -1).join('/');
   const endpoint = `${host.replace(/\/$/, '')}__COLLECT_API_ENDPOINT__`;
+  const heatmapEndpoint = `${host.replace(/\/$/, '')}/api/heatmap`;
   const screen = `${width}x${height}`;
   const eventRegex = /data-umami-event-([\w-_]+)/;
   const eventNameAttribute = `${_data}umami-event`;
@@ -201,6 +203,7 @@
       handlePathChanges();
       handleClicks();
       if (perf) initPerformance();
+      if (heatmapEnabled) initHeatmap();
     }
   };
 
@@ -380,6 +383,133 @@
       if (document.visibilityState === 'hidden') sendPerformance();
     });
     window.addEventListener('pagehide', sendPerformance);
+  };
+
+  /* Heatmap tracking */
+
+  const initHeatmap = () => {
+    const FLUSH_COUNT = 50;
+    const FLUSH_INTERVAL = 10000;
+    const MOVE_THROTTLE = 100;
+
+    let heatmapBuffer = [];
+    let flushTimer = null;
+
+    const getNormalizedCoords = (clientX, clientY) => {
+      const vw = window.innerWidth || document.documentElement.clientWidth;
+      const vh =
+        window.innerHeight || document.documentElement.clientHeight;
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        vh,
+      );
+      // Store as permille (0–10000) of viewport width and total document height
+      const x = Math.round((clientX / vw) * 10000);
+      const y = Math.round(((clientY + scrollY) / docHeight) * 10000);
+      return { x, y };
+    };
+
+    const getCurrentPath = () => {
+      try {
+        const u = new URL(currentUrl);
+        return u.pathname;
+      } catch {
+        return currentUrl;
+      }
+    };
+
+    const addPoint = (x, y, eventType) => {
+      if (trackingDisabled()) return;
+      heatmapBuffer.push({
+        urlPath: getCurrentPath(),
+        x,
+        y,
+        eventType,
+        timestamp: Math.floor(Date.now() / 1000),
+      });
+      if (heatmapBuffer.length >= FLUSH_COUNT) flushHeatmap();
+    };
+
+    const flushHeatmap = (useKeepalive = false) => {
+      if (!heatmapBuffer.length) return;
+      if (!cache) return;
+
+      const points = heatmapBuffer.splice(0, heatmapBuffer.length);
+
+      const body = JSON.stringify({
+        type: 'heatmap',
+        payload: {
+          website,
+          points,
+          timestamp: Math.floor(Date.now() / 1000),
+        },
+      });
+
+      try {
+        fetch(heatmapEndpoint, {
+          keepalive: useKeepalive && body.length < 60000,
+          method: 'POST',
+          body,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-umami-cache': cache,
+          },
+          credentials,
+        }).catch(() => {/* no-op */});
+      } catch {
+        /* no-op */
+      }
+    };
+
+    const scheduleFlush = () => {
+      if (flushTimer) clearTimeout(flushTimer);
+      flushTimer = setTimeout(() => flushHeatmap(), FLUSH_INTERVAL);
+    };
+
+    // Click tracking (event type 1)
+    document.addEventListener('click', e => {
+      const { x, y } = getNormalizedCoords(e.clientX, e.clientY);
+      addPoint(x, y, 1);
+      scheduleFlush();
+    }, true);
+
+    // Scroll-depth tracking (event type 2)
+    let maxScrollY = 0;
+    let scrollScheduled = false;
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      if (scrollY <= maxScrollY) return;
+      maxScrollY = scrollY;
+      if (scrollScheduled) return;
+      scrollScheduled = true;
+      setTimeout(() => {
+        scrollScheduled = false;
+        const { x, y } = getNormalizedCoords(window.innerWidth / 2, 0);
+        addPoint(x, y, 2);
+        scheduleFlush();
+      }, 500);
+    }, { passive: true });
+
+    // Mouse-move tracking (event type 3), throttled
+    let lastMove = 0;
+    document.addEventListener('mousemove', e => {
+      const now = Date.now();
+      if (now - lastMove < MOVE_THROTTLE) return;
+      lastMove = now;
+      const { x, y } = getNormalizedCoords(e.clientX, e.clientY);
+      addPoint(x, y, 3);
+      scheduleFlush();
+    }, { passive: true });
+
+    // Flush on page unload
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushHeatmap(true);
+    });
+    window.addEventListener('pagehide', () => flushHeatmap(true));
+
+    scheduleFlush();
   };
 
   /* Start */

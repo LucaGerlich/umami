@@ -88,6 +88,7 @@ model Website {
   sessionData         SessionData[]
   sessionReplays      SessionReplay[]
   sessionReplaysSaved SessionReplaySaved[]
+  heatmapData         HeatmapData[]
 
   @@index([userId])
   @@index([teamId])
@@ -398,4 +399,23 @@ model SessionReplaySaved {
   @@index([visitId])
   @@index([websiteId, createdAt])
   @@map("session_replay_saved")
+}
+
+model HeatmapData {
+  id        String    @id() @map("heatmap_id") @db.Uuid
+  websiteId String    @map("website_id") @db.Uuid
+  sessionId String    @map("session_id") @db.Uuid
+  urlPath   String    @map("url_path") @db.VarChar(500)
+  x         Int       @db.Integer
+  y         Int       @db.Integer
+  eventType Int       @map("event_type") @db.SmallInt
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  website Website @relation(fields: [websiteId], references: [id])
+
+  @@index([websiteId])
+  @@index([websiteId, urlPath])
+  @@index([websiteId, createdAt])
+  @@index([websiteId, urlPath, createdAt])
+  @@map("heatmap_data")
 }

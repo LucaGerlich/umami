@@ -101,6 +101,7 @@ export const COLLECTION_TYPE = {
   identify: 'identify',
   performance: 'performance',
   record: 'record',
+  heatmap: 'heatmap',
 } as const;
 
 export const WEB_VITALS_THRESHOLDS = {
@@ -117,6 +118,12 @@ export const EVENT_TYPE = {
   linkEvent: 3,
   pixelEvent: 4,
   performance: 5,
+} as const;
+
+export const HEATMAP_EVENT_TYPE = {
+  click: 1,
+  scroll: 2,
+  move: 3,
 } as const;
 
 export const ENTITY_TYPE = {

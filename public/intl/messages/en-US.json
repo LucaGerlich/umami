@@ -376,7 +376,12 @@
     "website-id": "Website ID",
     "websites": "Websites",
     "window": "Window",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "heatmap": "Heatmap",
+    "clicks": "Clicks",
+    "scroll": "Scroll",
+    "move": "Move",
+    "no-data": "No data"
   },
   "message": {
     "action-confirmation": "Type {confirmation} in the box below to confirm.",
