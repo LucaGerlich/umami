@@ -13,7 +13,9 @@ interface HeatmapCanvasProps {
   height: number;
 }
 
+// RADIUS: blur spread in pixels for each data point's radial gradient
 const RADIUS = 30;
+// MAX_OPACITY: maximum alpha intensity of the heatmap overlay (0–1)
 const MAX_OPACITY = 0.8;
 
 function buildColormap(): Uint8ClampedArray {

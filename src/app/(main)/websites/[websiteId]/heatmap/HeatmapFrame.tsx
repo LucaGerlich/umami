@@ -9,6 +9,7 @@ interface HeatmapFrameProps {
   points: HeatmapPoint[];
 }
 
+// Default iframe preview height matching a common desktop viewport
 const FRAME_HEIGHT = 768;
 
 export function HeatmapFrame({ urlPath, domain, points }: HeatmapFrameProps) {

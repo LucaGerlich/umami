@@ -414,9 +414,10 @@
     const getCurrentPath = () => {
       try {
         const u = new URL(currentUrl);
-        return u.pathname;
+        // Truncate to 500 chars to match the DB column length
+        return (u.pathname + u.search).slice(0, 500);
       } catch {
-        return currentUrl;
+        return currentUrl.slice(0, 500);
       }
     };
 
@@ -486,7 +487,8 @@
       scrollScheduled = true;
       setTimeout(() => {
         scrollScheduled = false;
-        const { x, y } = getNormalizedCoords(window.innerWidth / 2, 0);
+        // Record the maximum scroll depth reached: x is center of viewport, y reflects the scroll position
+        const { x, y } = getNormalizedCoords(window.innerWidth / 2, maxScrollY);
         addPoint(x, y, 2);
         scheduleFlush();
       }, 500);

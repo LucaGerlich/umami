@@ -405,6 +405,7 @@ model HeatmapData {
   id        String    @id() @map("heatmap_id") @db.Uuid
   websiteId String    @map("website_id") @db.Uuid
   sessionId String    @map("session_id") @db.Uuid
+  /// URL path of the page; limited to 500 chars (path + query string); URLs exceeding this limit are truncated by the tracker
   urlPath   String    @map("url_path") @db.VarChar(500)
   x         Int       @db.Integer
   y         Int       @db.Integer
