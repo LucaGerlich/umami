@@ -8,7 +8,6 @@ import { useMessages, useSubscription, useWebsite } from '@/components/hooks';
 import { useHeatmapDataQuery } from '@/components/hooks/queries/useHeatmapDataQuery';
 import { useHeatmapPagesQuery } from '@/components/hooks/queries/useHeatmapPagesQuery';
 import { Flame } from '@/components/icons';
-import { HeatmapCanvas } from './HeatmapCanvas';
 import { HeatmapControls } from './HeatmapControls';
 import { HeatmapFrame } from './HeatmapFrame';
 import { HeatmapLegend } from './HeatmapLegend';
@@ -28,7 +27,7 @@ export function HeatmapPage({ websiteId }: { websiteId: string }) {
     { urlPath: resolvedPath, type: eventType },
   );
 
-  if (cloudMode && !hasFeature('replays')) {
+  if (cloudMode && !hasFeature('heatmaps')) {
     return (
       <Column gap="3">
         <Panel>
