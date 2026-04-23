@@ -10,6 +10,7 @@ export interface Subscription {
 
 const FEATURES = {
   replays: 'isBusiness',
+  heatmaps: 'isBusiness',
 } as const;
 
 export type FeatureName = keyof typeof FEATURES;

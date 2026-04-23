@@ -1,6 +1,6 @@
 import { Icon, Row, Tab, TabList, Tabs, Text } from '@umami/react-zen';
 import { useMessages, useNavigation, useWebsite } from '@/components/hooks';
-import { ChartPie, Clock, Eye, User } from '@/components/icons';
+import { ChartPie, Clock, Eye, Flame, User } from '@/components/icons';
 import { Lightning } from '@/components/svg';
 
 export function WebsiteTabs() {
@@ -26,6 +26,12 @@ export function WebsiteTabs() {
       label: t(labels.sessions),
       icon: <User />,
       path: '/sessions',
+    },
+    {
+      id: 'heatmap',
+      label: t(labels.heatmap),
+      icon: <Flame />,
+      path: '/heatmap',
     },
     {
       id: 'realtime',

@@ -6,3 +6,5 @@ export * from './report';
 export * from './team';
 export * from './user';
 export * from './website';
+
+export { canViewWebsite as canViewHeatmap } from './website';
