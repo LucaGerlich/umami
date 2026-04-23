@@ -85,7 +85,7 @@ export function HeatmapFrame({ urlPath, domain, points }: HeatmapFrameProps) {
           ref={iframeRef}
           src={src}
           title="Heatmap preview"
-          sandbox="allow-same-origin"
+          sandbox="allow-same-origin allow-scripts"
           style={{
             width: dimensions.width,
             height: dimensions.height,
