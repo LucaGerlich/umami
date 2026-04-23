@@ -1,13 +1,10 @@
 import { keepPreviousData } from '@tanstack/react-query';
 import type { ReactQueryOptions } from '@/lib/types';
+import type { HeatmapPoint } from '@/queries/sql/heatmap/getHeatmapData';
 import { useApi } from '../useApi';
 import { useDateParameters } from '../useDateParameters';
 
-export interface HeatmapPoint {
-  x: number;
-  y: number;
-  count: number;
-}
+export type { HeatmapPoint };
 
 export function useHeatmapDataQuery(
   websiteId: string,

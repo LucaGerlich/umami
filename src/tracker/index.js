@@ -487,8 +487,17 @@
       scrollScheduled = true;
       setTimeout(() => {
         scrollScheduled = false;
-        // Record the maximum scroll depth reached: x is center of viewport, y reflects the scroll position
-        const { x, y } = getNormalizedCoords(window.innerWidth / 2, maxScrollY);
+        // Record the maximum scroll depth reached: x is center of viewport, y is scroll position
+        // Cannot use getNormalizedCoords here because maxScrollY is already document-absolute,
+        // and getNormalizedCoords would add scrollY again, doubling the value.
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        const docHeight = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight,
+          vh,
+        );
+        const x = 5000; // center of viewport
+        const y = Math.round((maxScrollY / docHeight) * 10000);
         addPoint(x, y, 2);
         scheduleFlush();
       }, 500);

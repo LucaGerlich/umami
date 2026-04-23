@@ -435,4 +435,7 @@ export const messages: Record<string, string> = {
   notFound: 'message.not-found',
   serverError: 'message.sever-error',
   upgradeRequired: 'message.upgrade-required',
+  heatmapUpgradeDescription: 'message.heatmap-upgrade-description',
+  heatmapEmptyDescription: 'message.heatmap-empty-description',
+  heatmapInteractions: 'message.heatmap-interactions',
 };

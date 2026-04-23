@@ -34,7 +34,7 @@ export function HeatmapPage({ websiteId }: { websiteId: string }) {
           <EmptyPlaceholder
             icon={<Flame />}
             title={t(messages.upgradeRequired, { plan: 'Business' })}
-            description="Visualise where users click, scroll, and move with heatmaps."
+            description={t(messages.heatmapUpgradeDescription)}
           >
             <Button
               variant="primary"
@@ -56,7 +56,7 @@ export function HeatmapPage({ websiteId }: { websiteId: string }) {
           <EmptyPlaceholder
             icon={<Flame />}
             title={t(labels.heatmap)}
-            description="No heatmap data collected yet. Add data-heatmap to your tracking script to start capturing interactions."
+            description={t(messages.heatmapEmptyDescription)}
           />
         ) : (
           <Column gap="4">
@@ -78,7 +78,9 @@ export function HeatmapPage({ websiteId }: { websiteId: string }) {
             <Text size="sm" color="muted">
               {points.length === 0 && !isLoading
                 ? t(messages.noDataAvailable)
-                : `${points.reduce((s, p) => s + p.count, 0).toLocaleString()} interactions visualised`}
+                : t(messages.heatmapInteractions, {
+                    count: points.reduce((s, p) => s + p.count, 0).toLocaleString(),
+                  })}
             </Text>
           </Column>
         )}

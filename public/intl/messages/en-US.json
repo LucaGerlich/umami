@@ -434,6 +434,9 @@
     "user-deleted": "User deleted.",
     "viewed-page": "Viewed page",
     "upgrade-required": "This feature requires a {plan} plan subscription.",
+    "heatmap-upgrade-description": "Visualise where users click, scroll, and move with heatmaps.",
+    "heatmap-empty-description": "No heatmap data collected yet. Add data-heatmap to your tracking script to start capturing interactions.",
+    "heatmap-interactions": "{count} interactions visualised",
     "visitor-log": "Visitor from <b>{country}</b> using <b>{browser}</b> on <b>{os}</b> <b>{device}</b>"
   }
 }

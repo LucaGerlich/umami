@@ -47,6 +47,7 @@ async function relationalQuery(
       ${typeFilter}
     group by x, y
     order by count desc
+    limit 10000
     `,
     { websiteId, urlPath, startDate, endDate, eventType },
     FUNCTION_NAME,
@@ -74,6 +75,7 @@ async function clickhouseQuery(
       ${typeFilter}
     group by x, y
     order by count desc
+    limit 10000
     `,
     { websiteId, urlPath, startDate, endDate, eventType },
     FUNCTION_NAME,

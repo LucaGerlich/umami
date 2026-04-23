@@ -12,5 +12,5 @@ CREATE TABLE umami.heatmap_data
 )
 ENGINE = MergeTree()
 PARTITION BY toYYYYMM(created_at)
-ORDER BY (heatmap_id, website_id, url_path, created_at)
+ORDER BY (website_id, url_path, created_at, heatmap_id)
 SETTINGS index_granularity = 8192;

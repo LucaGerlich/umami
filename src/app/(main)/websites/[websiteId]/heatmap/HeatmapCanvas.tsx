@@ -1,11 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-
-export interface HeatmapPoint {
-  x: number;
-  y: number;
-  count: number;
-}
+import type { HeatmapPoint } from '@/components/hooks/queries/useHeatmapDataQuery';
 
 interface HeatmapCanvasProps {
   points: HeatmapPoint[];
@@ -18,7 +13,11 @@ const RADIUS = 30;
 // MAX_OPACITY: maximum alpha intensity of the heatmap overlay (0–1)
 const MAX_OPACITY = 0.8;
 
-function buildColormap(): Uint8ClampedArray {
+let cachedColormap: Uint8ClampedArray | null = null;
+
+function getColormap(): Uint8ClampedArray {
+  if (cachedColormap) return cachedColormap;
+
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 1;
@@ -31,7 +30,8 @@ function buildColormap(): Uint8ClampedArray {
   grad.addColorStop(1, 'rgba(255,0,0,1)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 256, 1);
-  return ctx.getImageData(0, 0, 256, 1).data;
+  cachedColormap = ctx.getImageData(0, 0, 256, 1).data;
+  return cachedColormap;
 }
 
 export function HeatmapCanvas({ points, width, height }: HeatmapCanvasProps) {
@@ -69,7 +69,7 @@ export function HeatmapCanvas({ points, width, height }: HeatmapCanvasProps) {
 
     // Colorise
     const imageData = offCtx.getImageData(0, 0, width, height);
-    const colormap = buildColormap();
+    const colormap = getColormap();
     const data = imageData.data;
 
     for (let i = 0; i < data.length; i += 4) {
